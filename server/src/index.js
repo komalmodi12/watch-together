@@ -4,10 +4,12 @@ import http from 'http';
 import cors from 'cors';
 import {Server} from "socket.io";
 import {registerSocketHandlers} from './sockets/index.js';
+import youtubeRoutes from "./routes/youtubeRoutes.js";
 
 const app = express();
 
 app.use(cors({origin: process.env.CLIENT_URL }));
+app.use("/api", youtubeRoutes); // GET /api/trending
 
 app.get('/', (req,res)=>{
   res.send("Watch party server is running");

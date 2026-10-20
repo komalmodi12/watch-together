@@ -1,8 +1,10 @@
 import styles from "./ShortsRow.module.css";
 import ShortCard from "../shortcard/ShortCard";
-import { shorts } from "../../data/mockData";
+import useTrending from "../../hooks/useTrending";
 
 function ShortsRow() {
+  const { shorts } = useTrending();
+
   return (
     <div className={styles.row}>
       {shorts.map((s) => (

@@ -5,10 +5,13 @@ import HeroBanner from "../herobanner/HeroBanner";
 import SectionHeader from "../sectionheader/SectionHeader";
 import ShortsRow from "../shortsrow/ShortsRow";
 import VideoCard from "../videocard/VideoCard";
-import { videos } from "../../data/mockData";
+import useTrending from "../../hooks/useTrending";
+
 
 
 function MainFeed({ onCreate }) {
+
+   const { videos } = useTrending(); 
   return (
     <div className={styles.feed}>
       <CategoryChips />

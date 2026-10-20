@@ -1,9 +1,11 @@
 import { Flame } from "lucide-react";
 import styles from "./TrendingList.module.css";
 import TrendingItem from "../trendingitem/TrendingItem";
-import { trending } from "../../data/mockData";
+import useTrending from "../../hooks/useTrending";
 
 function TrendingList() {
+  const { trending } = useTrending();
+
   return (
     <section className={styles.card}>
       <h3 className={styles.title}>
