@@ -1,213 +1,122 @@
 # WatchTogether: YouTube Watch Party
 
-Watch YouTube videos together, perfectly in sync. Create a room, share the code or link, and everyone in the room sees the same video at the same second. The host decides who can control playback.
+WatchTogether is a web app where friends can watch the same YouTube video together at the same time. One person creates a room, shares the room code or link, and everyone who joins sees the video play, pause and jump to the same place. I built it as a full stack project using React, Node.js and Socket.IO.
 
-**Live app:** https://YOUR-CLIENT-NAME.onrender.com
-**Backend health check:** https://YOUR-SERVER-NAME.onrender.com/health
+## Links
 
-> **Heads up:** the backend runs on Render's free plan. After about 15 minutes without traffic it goes to sleep, so the first connection can take up to a minute. Rooms are kept in memory and are lost when the server sleeps or restarts.
+Live App: https://extraordinary-douhua-8742d4.netlify.app/
 
-## Features
+Backend Server: https://watch-together-server-0ylv.onrender.com
 
-- **Rooms:** create a room (you become the Host) and join with a 6 character code or a shareable link
-- **Real-time sync:** play, pause, seek and change video are identical for everyone, and late joiners start at the right second
-- **Roles:** Host, Moderator and Participant. Every permission is checked on the server
-- **Host tools:** promote or demote participants, remove people, transfer the host role
-- **Approval flow:** a Participant cannot change playback directly. They send a request and the Host or a Moderator approves or rejects it
-- **Live chat** with history for people who join late
-- Accepts YouTube links in many formats (`watch?v=`, `youtu.be/`, `embed/`, `shorts/`)
-- Automatic host hand-over when the host leaves
+Backend Health Check: https://watch-together-server-0ylv.onrender.com/health
 
-## Tech stack
+GitHub Repository: https://github.com/komalmodi12/watch-together
 
-| Layer | Technology | Used for |
-|---|---|---|
-| Frontend | React (Create React App), react-router-dom, CSS Modules | UI, routing, state shared through Context |
-| Realtime | Socket.IO (WebSocket with automatic fallback and reconnect) | Two way communication between server and clients |
-| Backend | Node.js, Express (ES modules) | HTTP server, room logic, Socket.IO server |
-| Video | YouTube IFrame Player API | Embedded, controllable player |
-| Storage | In-memory (`Map`) | Rooms, participants, chat history |
-| Hosting | Render (Static Site + Web Service) | Public deployment |
+The backend is hosted on the free plan of Render, so it may be asleep when you open the app. If that happens, the first connection can take up to a minute. Just wait a little and it will connect.
 
-## How it works
+## What You Can Do
 
-```
- Browser A (React + YouTube player)             Browser B
-        |                                            |
-        |  wss:// WebSocket (Socket.IO)              |
-        +-----------------+--------------------------+
-                          v
-        +----------------------------------------------+
-        |  Node + Express + Socket.IO (Render Web Svc) |
-        |                                              |
-        |   socket handlers ---> permission check      |
-        |         |                                    |
-        |         v                                    |
-        |   RoomManager ---> Room ---> Participant     |
-        +----------------------------------------------+
-```
+You can create a room and join other rooms using a room code or a shareable link. Playing, pausing, seeking and changing the video stays in sync for everyone in the room, and people who join late start from the correct time of the video.
 
-**The server is the single source of truth.** Clients never talk to each other and never trust each other. They send a request, the server validates it, updates the `Room`, and broadcasts the new state to everyone in that room.
+Every room has three kinds of users. The person who creates the room is the Host. People who join are Participants by default. The Host can make a Participant a Moderator, remove someone from the room, or hand the Host role to someone else. The Host and Moderators can control the video directly. Participants cannot, but they can send a request to play, pause, seek or change the video, and the Host or a Moderator can approve or reject it.
 
-Example: the host presses Pause
+There is also a live chat in every room. For changing the video, you can paste a normal YouTube link in different formats, such as watch links, youtu.be links, embed links or shorts links.
 
-1. The client emits `pause` with its current player time.
-2. The server reads the user's identity from its own record (`socket.data`), never from the message, and checks that the role is allowed to pause.
-3. If not allowed, only that user gets an `error_message`. Nobody else sees anything.
-4. If allowed, `Room.pause()` stores the new state and the server emits `sync_state` to the whole room (`io.to(roomId).emit`).
-5. Every client moves its YouTube player to match.
+## How To Use It
 
-### Sync details
+1. Open the live app.
+2. Click Create Room, type your name, and you become the Host of a new room.
+3. Copy the room code or the room link and send it to your friends.
+4. Your friends click Join Room and enter the code and their name. If they open your link, the code is already filled in.
+5. The Host and Moderators can use the play, pause and seek controls, and paste a YouTube link to change the video.
+6. Participants can use the same controls, but their action goes to the Host or a Moderator as a request. The request shows up in the Requests box, where it can be approved or rejected.
+7. The Host can see the participants list and use it to give someone the Moderator role, remove them, or make them the new Host.
 
-- The server stores `currentTime` and the moment it was saved (`updatedAt`). It does not tick every second. When the video is playing, the real position is `currentTime` plus the time elapsed since `updatedAt`.
-- Each client estimates the position with its **own** clock (time since it received the message), so server and browser clocks never have to agree.
-- YouTube's native controls are hidden and a transparent layer covers the video. The only way to control playback is through our controls, which send requests to the server. This also prevents echo loops, because server updates only call `playVideo`, `pauseVideo` and `seekTo`, which never emit anything back.
-- Drift correction: on every `sync_state` the player seeks if it is off by more than 1 second. While playing, a check every 5 seconds seeks if it is off by more than 2 seconds.
-- If the browser blocks autoplay, a "Click to join playback" button appears.
+## How It Works
 
-## Roles and permissions
+The app uses WebSockets through Socket.IO, which keeps a connection open between each browser and the server. This lets the server send updates to everyone in a room right away, without anyone refreshing the page.
 
-| Action | Host | Moderator | Participant |
-|---|---|---|---|
-| Play, pause, seek, change video | Yes | Yes | Sends a request |
-| Approve or reject requests | Yes | Yes | No |
-| Assign roles | Yes | No | No |
-| Remove participants | Yes | No | No |
-| Transfer host | Yes | No | No |
-| Chat | Yes | Yes | Yes |
+The server decides what is true. Browsers never talk to each other directly. When someone presses a button, the browser sends a request to the server, the server checks if that person is allowed to do it, and then it tells everyone in the room what changed. These permission checks happen on the server, so hiding a button in the interface is not the only protection.
 
-The creator of a room is the Host. Joiners start as Participants. When the Host transfers the role, the old Host becomes a Moderator. When the Host leaves, the server promotes a Moderator first, otherwise the longest-waiting Participant.
+The server remembers the video time and the moment it was saved. That is how a person who joins later gets the right time. If someone's player drifts away from the server's time, it jumps back to match.
 
-## WebSocket events
+The main events used are create_room, join_room, leave_room, play, pause, seek, change_video, assign_role, remove_participant, transfer_host, chat_message, request_action and resolve_request. The server replies with events like sync_state, user_joined, user_left, role_assigned and participant_removed.
 
-Events marked with * are extra events added on top of the suggested list.
+## Tech Stack
 
-**Client to server**
+The frontend is built with React and React Router. The backend uses Node.js and Express, and Socket.IO handles the real-time part. Videos are played with the YouTube IFrame Player API. There is no database, and all rooms and messages are kept in the server's memory.
 
-| Event | Payload | Who may send |
-|---|---|---|
-| `create_room` * | `{ username }` | Anyone |
-| `join_room` | `{ roomId, username }` | Anyone |
-| `leave_room` | none | Anyone in a room |
-| `play` / `pause` | `{ currentTime }` | Host, Moderator |
-| `seek` | `{ time }` | Host, Moderator |
-| `change_video` | `{ videoId }` | Host, Moderator |
-| `assign_role` | `{ userId, role }` | Host |
-| `remove_participant` | `{ userId }` | Host |
-| `transfer_host` * | `{ userId }` | Host |
-| `chat_message` * | `{ text }` | Anyone in a room |
-| `request_action` * | `{ type, time?, videoId? }` | Participant |
-| `resolve_request` * | `{ requestId, approve }` | Host, Moderator |
+## Run It Locally
 
-**Server to client**
+You need Node.js version 20 or newer.
 
-| Event | Payload | Sent to |
-|---|---|---|
-| `sync_state` | `{ videoId, playState, currentTime, serverTime }` | Room |
-| `user_joined` | `{ username, userId, role, participants }` | Room, except the joiner |
-| `user_left` | `{ username, userId, participants }` | Room |
-| `role_assigned` | `{ userId, username, role, participants }` | Room |
-| `participant_removed` | `{ userId, username, participants }` | Room, including the removed user |
-| `chat_message` * | `{ id, userId, username, text, timestamp }` | Room |
-| `chat_history` * | array of messages | The new joiner |
-| `approval_requests` * | array of pending requests | Each user gets their own view |
-| `request_result` * | `{ type, approved, by }` | The requester |
-| `error_message` * | `{ action, message }` | The sender only |
-
-Most client events also use Socket.IO **acknowledgements** (a callback), so the UI gets a direct `{ ok, message }` answer like a normal request and response.
-
-## Project structure
-
-```
-watch-party/
-├── client/                      React app
-│   └── src/
-│       ├── context/SocketContext.jsx   one socket, all server events, all actions
-│       ├── pages/                      Home, Room
-│       ├── components/                 one folder per component
-│       ├── utils/                      YouTube URL parser, IFrame API loader, helpers
-│       ├── data/mockData.js            sample content for the home page
-│       └── styles/                     CSS variables and global styles
-└── server/
-    └── src/
-        ├── index.js                    Express + HTTP + Socket.IO setup
-        ├── models/                     Participant, Room (state and rules)
-        ├── services/RoomManager.js     all rooms, room codes
-        ├── sockets/                    room, playback, role, chat, approval handlers
-        └── utils/                      permissions table, validators, helpers
-```
-
-## Run locally
-
-Requirements: Node.js 18 or newer.
+First, clone the project.
 
 ```bash
-# 1. Backend
+git clone https://github.com/komalmodi12/watch-together.git
+cd watch-together
+```
+
+Then set up and start the backend.
+
+```bash
 cd server
 npm install
-cp .env.example .env        # Windows: copy .env.example .env
-npm run dev                 # http://localhost:5000
-
-# 2. Frontend (a second terminal)
-cd client
-npm install
-cp .env.example .env        # Windows: copy .env.example .env
-npm start                   # http://localhost:3000
 ```
 
-Open `http://localhost:3000` in two browser tabs. Each tab is a different user.
+Create a file named .env inside the server folder with this line:
 
-Frontend unit tests (YouTube URL parser):
+```
+CLIENT_URL=http://localhost:3000
+```
+
+Now start the server.
+
+```bash
+npm run dev
+```
+
+The backend will run on http://localhost:5000
+
+Open a second terminal for the frontend.
 
 ```bash
 cd client
-npm test -- --watchAll=false
+npm install
 ```
 
-## Environment variables
+Create a file named .env inside the client folder with this line:
 
-| Where | Variable | Example | Notes |
-|---|---|---|---|
-| server | `PORT` | `5000` | Render sets this automatically in production |
-| server | `CLIENT_URL` | `https://my-app.onrender.com` | Allowed origin for CORS. One or more origins separated by commas, with no trailing slash |
-| client | `REACT_APP_SERVER_URL` | `https://my-server.onrender.com` | Backend URL. It is baked into the bundle at **build time**, so changing it needs a rebuild |
+```
+REACT_APP_SERVER_URL=http://localhost:5000
+```
 
-## Deployment (Render)
+Now start the app.
 
-Two services from the same GitHub repository:
+```bash
+npm start
+```
 
-| | Backend | Frontend |
-|---|---|---|
-| Type | Web Service | Static Site |
-| Root directory | `server` | `client` |
-| Build command | `npm install` | `npm install && npm run build` |
-| Start command / publish dir | `npm start` | `build` |
-| Environment | `CLIENT_URL` | `REACT_APP_SERVER_URL` |
-| Extra | Health check path `/health` | Rewrite rule `/*` to `/index.html` |
+The frontend will run on http://localhost:3000. To try it out, open it in two browser tabs. Each tab works like a different person.
 
-The rewrite rule is needed because the app uses client-side routing. Without it, opening or refreshing `/room/ABC123` returns a 404 instead of the app.
+## Environment Variables
 
-Order: deploy the backend first, copy its URL into the frontend's `REACT_APP_SERVER_URL`, deploy the frontend, then copy the frontend URL into the backend's `CLIENT_URL`.
+There are only two variables.
 
-## Design decisions and trade-offs
+CLIENT_URL is used by the backend. It is the address of the frontend that is allowed to connect to the server. Write it without a slash at the end.
 
-- **Server as the source of truth** keeps every client consistent and makes cheating impossible. The cost is that every action needs a round trip.
-- **Identity is created by the server.** `userId` is generated on join and stored in `socket.data`. Handlers use that record, never a name or id sent by the client, so nobody can act as someone else.
-- **One permissions table** (`utils/permissions.js`) maps each action to the roles allowed to do it, and every handler calls the same check first.
-- **State is in memory.** It is simple and fast, but rooms are lost on restart and the app runs as a single instance.
-- **Native YouTube controls are hidden** so playback can only be changed through the server, at the cost of losing YouTube's own quality and speed menus.
-- **Rate limits:** chat is limited per socket (5 messages per 10 seconds) and requests have a 1 second cooldown.
+REACT_APP_SERVER_URL is used by the frontend. It is the address of the backend server. This value is added when the app is built, so if you change it you need to build the frontend again.
 
-## Known limitations
+Both of these are just public web addresses. No passwords or secret keys are needed, and you should not commit your .env files to GitHub.
 
-- Refreshing the page or losing the connection removes you from the room, and you join again as a new user.
-- Requests waiting for approval do not expire.
-- Some videos cannot be embedded (the owner disabled it). The player shows a message for those.
-- Rate limits are per socket, not per IP or account.
+## Deployment
 
-## Future improvements
+The frontend is deployed on Netlify and the backend is deployed on Render. On Netlify, REACT_APP_SERVER_URL is set to the address of the Render server. On Render, CLIENT_URL is set to the address of the Netlify app.
 
-- Horizontal scaling with the Socket.IO Redis adapter and sticky sessions behind a load balancer
-- Persistent rooms and chat in a database
-- Login, and resuming a session after a refresh
-- Emoji reactions
+## Project Structure
+
+The client folder has the React app, including the pages, components, the socket context and some helper files. The server folder has the backend code inside src. In there, index.js sets up Express and Socket.IO, models has the Participant and Room classes, services has the RoomManager that keeps track of all rooms, sockets has the event handlers, and utils has the permission checks and other helpers.
+
+## Limitations
+
+The free Render backend can go to sleep when nobody is using it, so the first connection after a break can be slow. Rooms and chat messages are stored in memory, so they can be lost when the server restarts. Some YouTube videos do not allow embedding, and the player shows a message when that happens. Refreshing the page also removes you from the room, so you have to join again.
