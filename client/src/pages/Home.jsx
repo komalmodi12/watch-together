@@ -13,10 +13,10 @@ function Home() {
 
   const location = useLocation();
 
-  
-
-  const [modal, setModal] = useState(null);   
-  const [joinCode, setJoinCode] = useState(""); 
+const [modal, setModal] = useState(null);
+const [joinCode, setJoinCode] = useState(
+  location.state?.joinCode || ""
+);
 
   const openCreate = () => setModal("create");
 
