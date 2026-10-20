@@ -13,7 +13,7 @@ function Home() {
 
   const location = useLocation();
 
-  const codeFromLink = location.state?.joinCode || "";
+  
 
   const [modal, setModal] = useState(null);   
   const [joinCode, setJoinCode] = useState(""); 
