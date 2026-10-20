@@ -4,7 +4,7 @@ WatchTogether is a web app where friends can watch the same YouTube video togeth
 
 ## Links
 
-Live App: https://extraordinary-douhua-8742d4.netlify.app/
+Live App: https://watch-together-app.netlify.app
 
 Backend Server: https://watch-together-server-0ylv.onrender.com
 
