@@ -1,0 +1,20 @@
+:root {
+  
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface-2: #272727;
+  --border: #2b2b2b;
+  --text: #ffffff;
+  --text-muted: #aaaaaa;
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --danger: #ff0000;
+
+ 
+  --nav-height: 56px;
+  --sidebar-width: 240px;
+  --right-width: 340px;
+
+  --radius: 12px;
+  --gap: 16px;
+}

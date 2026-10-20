@@ -1,0 +1,16 @@
+.hero {
+  position: relative;
+  min-height: 220px;
+  padding: 32px;
+  border-radius: var(--radius);
+  background: linear-gradient(120deg, #1e1b4b, #3b1d8f 60%, #1e3a8a);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.title { font-size: 38px; font-weight: 800; letter-spacing: -1px; }
+.sub { font-size: 18px; font-weight: 600; max-width: 380px; }
+.close { position: absolute; top: 10px; right: 10px; }

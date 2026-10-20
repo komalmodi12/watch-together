@@ -1,0 +1,4 @@
+.item { display: flex; gap: 12px; cursor: pointer; }
+.thumb { width: 96px; height: 54px; border-radius: 8px; flex-shrink: 0; }
+.info { display: flex; flex-direction: column; font-size: 13px; color: var(--text-muted); min-width: 0; }
+.title { color: var(--text); font-size: 15px; }

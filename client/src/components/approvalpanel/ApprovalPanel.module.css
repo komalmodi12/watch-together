@@ -1,0 +1,17 @@
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent); /* the accent edge makes it stand out from the other cards */
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.title { font-size: 16px; }
+
+.list {
+  list-style: none;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

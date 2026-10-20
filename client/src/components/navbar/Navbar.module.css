@@ -1,0 +1,36 @@
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.left,
+.right,
+.center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.left {
+  flex-shrink: 0;
+}
+
+.center {
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.right {
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+@media (max-width: 800px) {
+  .createBtn {
+    display: none; 
+  }
+}

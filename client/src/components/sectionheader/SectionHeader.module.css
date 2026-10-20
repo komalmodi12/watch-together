@@ -1,0 +1,3 @@
+.header { display: flex; align-items: center; justify-content: space-between; }
+.title { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; }
+.viewAll { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; }

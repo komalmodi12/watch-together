@@ -1,0 +1,2 @@
+.feed { display: flex; flex-direction: column; gap: 20px; }
+.videos { display: flex; flex-direction: column; gap: 24px; }

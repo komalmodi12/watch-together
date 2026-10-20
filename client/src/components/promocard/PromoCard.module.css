@@ -1,0 +1,11 @@
+.card {
+  border-radius: var(--radius);
+  padding: 24px;
+  background: linear-gradient(135deg, #1e1b4b, #312e81);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  font-size: 18px;
+}

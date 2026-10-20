@@ -1,0 +1,18 @@
+.card {
+  flex: 0 0 150px;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.info {
+  width: 100%;
+  padding: 24px 10px 10px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75)); 
+}
+
+.title { font-size: 14px; font-weight: 600; }
+.views { font-size: 12px; color: #ddd; }

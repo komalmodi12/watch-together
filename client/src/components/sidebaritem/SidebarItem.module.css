@@ -1,0 +1,23 @@
+.item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.item:hover {
+  background: var(--surface-2);
+}
+
+.active {
+  background: #3d1414; 
+  font-weight: 600;
+}
+
+.active:hover {
+  background: #4a1919;
+}

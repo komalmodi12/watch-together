@@ -1,0 +1,10 @@
+.chip {
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 14px;
+  white-space: nowrap; 
+}
+.chip:hover { background: #3a3a3a; }
+.active { background: #fff; color: #000; }
+.active:hover { background: #fff; }

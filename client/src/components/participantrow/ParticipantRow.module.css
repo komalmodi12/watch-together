@@ -1,0 +1,72 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info {
+  flex: 1;
+  min-width: 0; /* lets a long name shrink and get "..." instead of pushing the buttons out */
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.name {
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.host { background: var(--accent); }
+.moderator { background: #0d9488; }
+.participant { background: var(--surface-2); color: var(--text-muted); }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.select {
+  height: 32px;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  cursor: pointer;
+}
+.select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.remove {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #ff6b6b;
+}
+.remove:hover:not(:disabled) { background: rgba(255, 107, 107, 0.15); }
+.remove:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.makeHost {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: #fbbf24;
+}
+.makeHost:hover:not(:disabled) { background: rgba(251, 191, 36, 0.15); }
+.makeHost:disabled { opacity: 0.5; cursor: not-allowed; }

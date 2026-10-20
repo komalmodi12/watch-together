@@ -1,0 +1,9 @@
+.avatar {
+  border-radius: 50%;
+  background: #1a73e8;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  user-select: none;
+}

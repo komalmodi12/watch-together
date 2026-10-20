@@ -1,0 +1,36 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.title { font-size: 20px; }
+
+.code {
+  font-family: monospace;
+  font-weight: 700;
+  letter-spacing: 3px;
+  background: var(--surface-2);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.copyBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 14px;
+}
+.copyBtn:hover { background: #3a3a3a; }
